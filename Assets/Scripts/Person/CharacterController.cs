@@ -22,6 +22,12 @@ public class CharacterController : MonoBehaviour
         CustomInput run = inputsManager.GetInput("Run");
         run.OnDown += character.ToggleRun;
         run.OnUp += character.ToggleRun;
+
+        CustomInput jump = inputsManager.GetInput("Jump");
+        CustomInput down = inputsManager.GetInput("Down");
+
+        jump.OnDown += character.Jump;
+        down.OnDown += character.Down;
     }
 
     private void Start()

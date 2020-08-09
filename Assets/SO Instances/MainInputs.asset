@@ -37,3 +37,7 @@ MonoBehaviour:
     key: 304
     btn: 0
     isMouseKey: 0
+  - name: Down
+    key: 115
+    btn: 0
+    isMouseKey: 0

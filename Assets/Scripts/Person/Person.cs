@@ -7,13 +7,13 @@ public class Person : PhysicalObject
 {
     public Animator animator;
 
-    public float walkSpeed, runSpeed, JumpSpeed, dashSpeed;
+    public float walkSpeed, runSpeed, jumpSpeed, dashSpeed;
 
     public bool isMovingRight, isMovingLeft, isMoving, isRunning, isGrounded;
 
     private float moveSpeed;
 
-#region Public Functions
+    #region Public Functions
     public void Move(int dir)
     {
         rb.velocity = new Vector3(dir * moveSpeed, rb.velocity.y, rb.velocity.z);
@@ -21,7 +21,12 @@ public class Person : PhysicalObject
 
     public void Jump()
     {
+        rb.velocity = new Vector3(rb.velocity.x, jumpSpeed, rb.velocity.z);
+    }
 
+    public void Down()
+    {
+        rb.velocity = new Vector3(rb.velocity.x, -jumpSpeed * 2, rb.velocity.z);
     }
 
     public void InteractWithNearby()
