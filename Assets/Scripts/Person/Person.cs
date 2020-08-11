@@ -10,6 +10,7 @@ public class Person : PhysicalObject
     public float walkSpeed, runSpeed, jumpSpeed, dashSpeed;
 
     public bool isMovingRight, isMovingLeft, isMoving, isRunning, isGrounded;
+    public bool isFacingRight;
 
     private float moveSpeed;
 
@@ -37,6 +38,12 @@ public class Person : PhysicalObject
     public void Interact()
     {
 
+    }
+
+    public void Flip()
+    {
+        isFacingRight = !isFacingRight;
+        transform.Rotate(0, 180, 0);
     }
 
     #region Start/Stop Moving
@@ -140,7 +147,6 @@ public class Person : PhysicalObject
 
     private void Update()
     {
-        
     }
 #endregion
 }

@@ -7,6 +7,8 @@ public class CharacterController : MonoBehaviour
     public Inputs inputsManager;
     public Person character;
 
+    public Transform indicator;
+
     public void BindInputs()
     {
         CustomInput right = inputsManager.GetInput("Right");
@@ -53,6 +55,14 @@ public class CharacterController : MonoBehaviour
             {
                 inpt.Hold();
             }
+        }
+
+
+        Vector3 diff = indicator.position - transform.position;
+
+        if (diff.x > 0 == character.isFacingRight)
+        {
+            character.Flip();
         }
     }
 }
