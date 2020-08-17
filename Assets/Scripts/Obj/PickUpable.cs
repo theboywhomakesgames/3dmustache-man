@@ -16,7 +16,6 @@ public class PickUpable : PhysicalObject, ITriggerable
         hasHolder = true;
         transform.parent = p.handPose;
         transform.position = transform.position + p.handPose.position - handle.position;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
         GetPickedUp();
     }
 
