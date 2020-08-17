@@ -9,7 +9,7 @@ public class Person : PhysicalObject
 
     public float walkSpeed, runSpeed, jumpSpeed, dashSpeed;
 
-    public bool isMovingRight, isMovingLeft, isMoving, isRunning, isGrounded;
+    public bool isMovingForward, isMovingBackward, isMoving, isRunning, isGrounded, movingLeft, movingRight;
     public bool isFacingRight;
 
     private float moveSpeed;
@@ -42,51 +42,108 @@ public class Person : PhysicalObject
 
     public void Flip()
     {
-        isFacingRight = !isFacingRight;
-        transform.Rotate(0, 180, 0);
+        if (movingRight)
+        {
+            StopMovingRight();
+            isFacingRight = !isFacingRight;
+            transform.Rotate(0, 180, 0);
+            StartMovingRight();
+        }
+        else if (movingLeft)
+        {
+            StopMovingLeft();
+            isFacingRight = !isFacingRight;
+            transform.Rotate(0, 180, 0);
+            StartMovingLeft();
+        }
+        else
+        {
+            isFacingRight = !isFacingRight;
+            transform.Rotate(0, 180, 0);
+        }
     }
 
     #region Start/Stop Moving
 
     public void StartMovingRight()
     {
-        isMovingRight = true;
-
-        if (!isRunning)
-            animator.SetBool("WalkingRight", true);
+        movingRight = true;
+        if (isFacingRight)
+        {
+            isMovingForward = true;
+            if (!isRunning)
+                animator.SetBool("WalkingRight", true);
+            else
+                animator.SetBool("RunningRight", true);
+        }
         else
-            animator.SetBool("RunningRight", true);
+        {
+            isMovingBackward = true;
+            if (!isRunning)
+                animator.SetBool("WalkingLeft", true);
+            else
+                animator.SetBool("RunningLeft", true);
+        }
     }
 
     public void StopMovingRight()
     {
-        isMovingRight = false;
-
-        animator.SetBool("WalkingRight", false);
-        animator.SetBool("RunningRight", false);
+        movingRight = false;
+        if (isFacingRight)
+        {
+            isMovingForward = false;
+            animator.SetBool("WalkingRight", false);
+            animator.SetBool("RunningRight", false);
+        }
+        else
+        {
+            isMovingBackward = false;
+            animator.SetBool("WalkingLeft", false);
+            animator.SetBool("RunningLeft", false);
+        }
     }
 
     public void StartMovingLeft()
     {
-        isMovingLeft = true;
-
-        if (!isRunning)
-            animator.SetBool("WalkingLeft", true);
+        movingLeft = true;
+        if (isFacingRight)
+        {
+            isMovingBackward = true;
+            if (!isRunning)
+                animator.SetBool("WalkingLeft", true);
+            else
+                animator.SetBool("RunningLeft", true);
+        }
         else
-            animator.SetBool("RunningLeft", true);
+        {
+            isMovingForward = true;
+            if (!isRunning)
+                animator.SetBool("WalkingRight", true);
+            else
+                animator.SetBool("RunningRight", true);
+        }
     }
 
     public void StopMovingLeft()
     {
-        isMovingLeft = false;
-
-        animator.SetBool("WalkingLeft", false);
-        animator.SetBool("RunningLeft", false);
+        movingLeft = false;
+        if (isFacingRight)
+        {
+            isMovingBackward = false;
+            animator.SetBool("WalkingLeft", false);
+            animator.SetBool("RunningLeft", false);
+        }
+        else
+        {
+            isMovingForward = false;
+            animator.SetBool("WalkingRight", false);
+            animator.SetBool("RunningRight", false);
+        }
     }
 
     public void CheckIfMoving()
     {    
-        isMoving = isMovingLeft || isMovingRight;
+        isMoving = isMovingBackward || isMovingForward;
     }
 
     public void ToggleRun()
@@ -94,39 +151,22 @@ public class Person : PhysicalObject
         isRunning = !isRunning;
 
         if (isRunning) {
-            moveSpeed = runSpeed;
-            if (isMovingLeft)
-            {
-                animator.SetBool("WalkingLeft", false);
-                animator.SetBool("RunningLeft", true);
-            }
-            else if (isMovingRight)
-            {
-                animator.SetBool("WalkingRight", false);
-                animator.SetBool("RunningRight", true);
-            }
+            moveSpeed = runSpeed;            
         }
         else
         {
-            moveSpeed = walkSpeed;
-            if (isMovingLeft)
-            {
-                animator.SetBool("WalkingLeft", true);
-                animator.SetBool("RunningLeft", false);
-            }
-            else if (isMovingRight)
-            {
-                animator.SetBool("WalkingRight", true);
-                animator.SetBool("RunningRight", false);
-            }
-            else
-            {
-                animator.SetBool("WalkingRight", false);
-                animator.SetBool("RunningRight", false);
-                animator.SetBool("WalkingLeft", false);
-                animator.SetBool("RunningLeft", false);
+            moveSpeed = walkSpeed;            
+        }
 
-            }
+        if (movingLeft)
+        {
+            StopMovingLeft();
+            StartMovingLeft();
+        }
+        else if (movingRight)
+        {
+            StopMovingRight();
+            StartMovingRight();
         }
     }
     #endregion

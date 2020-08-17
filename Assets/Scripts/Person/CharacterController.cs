@@ -60,7 +60,7 @@ public class CharacterController : MonoBehaviour
 
         Vector3 diff = indicator.position - transform.position;
 
-        if (diff.x > 0 == character.isFacingRight)
+        if (diff.x > 0 != character.isFacingRight)
         {
             character.Flip();
         }
