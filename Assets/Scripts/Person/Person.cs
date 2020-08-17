@@ -6,28 +6,34 @@ using UnityEngine.EventSystems;
 public class Person : PhysicalObject
 {
     public Animator animator;
+    public Transform handPose;
 
     public float walkSpeed, runSpeed, jumpSpeed, dashSpeed;
 
     public bool isMovingForward, isMovingBackward, isMoving, isRunning, isGrounded, movingLeft, movingRight;
     public bool isFacingRight;
 
+    [SerializeField]
+    private bool _isHandFull;
+    [SerializeField]
+    private PickUpable _handContaining;
+
     private float moveSpeed;
 
     #region Public Functions
     public void Move(int dir)
     {
-        rb.velocity = new Vector3(dir * moveSpeed, rb.velocity.y, rb.velocity.z);
+        _rb.velocity = new Vector3(dir * moveSpeed, _rb.velocity.y, _rb.velocity.z);
     }
 
     public void Jump()
     {
-        rb.velocity = new Vector3(rb.velocity.x, jumpSpeed, rb.velocity.z);
+        _rb.velocity = new Vector3(_rb.velocity.x, jumpSpeed, _rb.velocity.z);
     }
 
     public void Down()
     {
-        rb.velocity = new Vector3(rb.velocity.x, -jumpSpeed * 2, rb.velocity.z);
+        _rb.velocity = new Vector3(_rb.velocity.x, -jumpSpeed * 2, _rb.velocity.z);
     }
 
     public void InteractWithNearby()
@@ -182,11 +188,17 @@ public class Person : PhysicalObject
 
     protected virtual void Start()
     {
+        if (_isHandFull)
+        {
+            _handContaining.GetPickedUpBy(this);
+        }
+
         moveSpeed = walkSpeed;
     }
 
     private void Update()
     {
+
     }
 #endregion
 }
