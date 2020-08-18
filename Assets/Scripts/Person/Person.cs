@@ -41,9 +41,12 @@ public class Person : PhysicalObject
 
     }
 
-    public void Interact()
+    public void Trigger()
     {
-
+        if (_isHandFull)
+        {
+            _handContaining.Trigger((IndicatorPlacer.indicatorTransform.position - _handContaining.transform.position).normalized);
+        }
     }
 
     public void Flip()

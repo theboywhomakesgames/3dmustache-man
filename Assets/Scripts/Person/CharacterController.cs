@@ -30,6 +30,9 @@ public class CharacterController : MonoBehaviour
 
         jump.OnDown += character.Jump;
         down.OnDown += character.Down;
+
+        CustomInput trigger = inputsManager.GetInput("Trigger");
+        trigger.OnHold += character.Trigger;
     }
 
     private void Start()
@@ -41,19 +44,39 @@ public class CharacterController : MonoBehaviour
     {
         foreach(CustomInput inpt in inputsManager.inputs)
         {
-            if (Input.GetKeyDown(inpt.key))
+            if (inpt.isMouseKey)
             {
-                inpt.Down();
-            }
+                if (Input.GetMouseButton(inpt.btn))
+                {
+                    inpt.Hold();
+                }
 
-            if (Input.GetKeyUp(inpt.key))
-            {
-                inpt.Up();
-            }
+                if (Input.GetMouseButtonDown(inpt.btn))
+                {
+                    inpt.Up();
+                }
 
-            if (Input.GetKey(inpt.key))
+                if (Input.GetMouseButtonUp(inpt.btn))
+                {
+                    inpt.Down();
+                }
+            }
+            else
             {
-                inpt.Hold();
+                if (Input.GetKeyDown(inpt.key))
+                {
+                    inpt.Down();
+                }
+
+                if (Input.GetKeyUp(inpt.key))
+                {
+                    inpt.Up();
+                }
+
+                if (Input.GetKey(inpt.key))
+                {
+                    inpt.Hold();
+                }
             }
         }
 

@@ -41,3 +41,7 @@ MonoBehaviour:
     key: 115
     btn: 0
     isMouseKey: 0
+  - name: Trigger
+    key: 115
+    btn: 0
+    isMouseKey: 1

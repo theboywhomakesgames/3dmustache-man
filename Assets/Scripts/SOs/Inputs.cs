@@ -11,7 +11,7 @@ public class CustomInput
 
     public string name;
     public KeyCode key;
-    public MouseButton btn;
+    public int btn;
     public bool isMouseKey;
 
     public event InputHandler OnHold, OnDown, OnUp;
