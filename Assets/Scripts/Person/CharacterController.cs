@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(TimeTweaker))]
 public class CharacterController : MonoBehaviour
 {
     public Inputs inputsManager;
@@ -9,16 +10,24 @@ public class CharacterController : MonoBehaviour
 
     public Transform indicator;
 
+    private int _actionsCount = 0;
+    private float _actionTime = 0.1f;
+    private TimeTweaker _timeTweaker;
+
     public void BindInputs()
     {
         CustomInput right = inputsManager.GetInput("Right");
         right.OnDown += character.StartMovingRight;
+        right.OnDown += StartAction;
         right.OnUp += character.StopMovingRight;
+        right.OnUp += StopAction;
         right.OnHold += () => { character.Move(1); };
 
         CustomInput left = inputsManager.GetInput("Left");
         left.OnDown += character.StartMovingLeft;
+        left.OnDown += StartAction;
         left.OnUp += character.StopMovingLeft;
+        left.OnUp += StopAction;
         left.OnHold += () => { character.Move(-1); };
 
         CustomInput run = inputsManager.GetInput("Run");
@@ -29,14 +38,40 @@ public class CharacterController : MonoBehaviour
         CustomInput down = inputsManager.GetInput("Down");
 
         jump.OnDown += character.Jump;
+        jump.OnDown += StartTimedAction;
         down.OnDown += character.Down;
+        down.OnDown += StartTimedAction;
 
         CustomInput trigger = inputsManager.GetInput("Trigger");
         trigger.OnHold += character.Trigger;
+        trigger.OnDown += StartAction;
+        trigger.OnUp += StopAction;
+    }
+
+    private void StartAction()
+    {
+        _actionsCount++;
+        _timeTweaker.FastenUp();
+    }
+
+    private void StartTimedAction()
+    {
+        StartAction();
+        Invoke(nameof(StopAction), _actionTime);
+    }
+
+    private void StopAction()
+    {
+        _actionsCount--;
+        if (_actionsCount <= 0)
+        {
+            _timeTweaker.SlowDown();
+        }
     }
 
     private void Start()
     {
+        _timeTweaker = GetComponent<TimeTweaker>();
         BindInputs();
     }
 
@@ -53,16 +88,21 @@ public class CharacterController : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(inpt.btn))
                 {
-                    inpt.Up();
+                    inpt.Down();
                 }
 
                 if (Input.GetMouseButtonUp(inpt.btn))
                 {
-                    inpt.Down();
+                    inpt.Up();
                 }
             }
             else
             {
+                if (Input.GetKey(inpt.key))
+                {
+                    inpt.Hold();
+                }
+
                 if (Input.GetKeyDown(inpt.key))
                 {
                     inpt.Down();
@@ -71,11 +111,6 @@ public class CharacterController : MonoBehaviour
                 if (Input.GetKeyUp(inpt.key))
                 {
                     inpt.Up();
-                }
-
-                if (Input.GetKey(inpt.key))
-                {
-                    inpt.Hold();
                 }
             }
         }

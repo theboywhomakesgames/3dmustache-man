@@ -5715,6 +5715,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stepSize: 0.05
+  _fastModeFactor: 1
 --- !u!114 &836640617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12737,6 +12738,7 @@ MonoBehaviour:
   _gunHole: {fileID: 1861376754}
   _fixedZ: 0.5
   _restDuration: 0.5
+  _recoilAmount: 1
 --- !u!1 &919132148772616752
 GameObject:
   m_ObjectHideFlags: 0
@@ -12783,7 +12785,7 @@ MonoBehaviour:
   solverIterationCount: 6
   visualizeTargetPose: 1
   mappingWeight: 1
-  pinWeight: 0.464
+  pinWeight: 0.6
   muscleWeight: 1
   muscleSpring: 100
   muscleDamper: 0
