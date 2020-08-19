@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: IndicatorMat
+  m_Name: IndicatorSub
   m_Shader: {fileID: 4800000, guid: 3f3d2b4fb066d994ea23f7f6ecfafc06, type: 3}
   m_ShaderKeywords: _EMISSION _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 0
@@ -73,5 +73,5 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 0, b: 0, a: 0.5882353}
+    - _Color: {r: 1, g: 1, b: 1, a: 0.27058825}
     - _EmissionColor: {r: 1024, g: 0, b: 0, a: 1}

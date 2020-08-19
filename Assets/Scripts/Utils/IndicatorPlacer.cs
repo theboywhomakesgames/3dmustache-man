@@ -9,11 +9,11 @@ public class IndicatorPlacer : MonoBehaviour
     [SerializeField]
     private float _mouseSpeed = 10f, _restrictedRadius = 1f;
     [SerializeField]
-    private Transform _dependance;
+    private Transform _dependance, _subPointer;
     [SerializeField]
     private Vector3 _restrictionOffset;
 
-    private Vector3 _offset;
+    private Vector3 _offset, _subOffset;
 
     public void ApplyRecoil(float amount)
     {
@@ -29,19 +29,17 @@ public class IndicatorPlacer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 lastOffset = _offset;
-        _offset += new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0) * _mouseSpeed;
+        Vector3 newDiff = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0) * _mouseSpeed;
+        _subOffset += newDiff;
 
-        Vector3 endResult = _dependance.position + _offset;
+        _subPointer.position = _dependance.position + _subOffset;
+
+        Vector3 endResult = _subPointer.position;
         Vector3 diff = _dependance.position + _restrictionOffset - endResult;
 
         if (diff.magnitude > _restrictedRadius)
         {
             transform.position = endResult;
-        }
-        else
-        {
-            _offset = lastOffset;
         }
 
         // keep cursur locked and in center
