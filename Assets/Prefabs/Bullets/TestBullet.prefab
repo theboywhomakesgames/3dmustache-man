@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 5080438204734290705}
   - component: {fileID: 5080438204734290710}
   - component: {fileID: 5080438204734290711}
-  m_Layer: 0
+  - component: {fileID: 4054483455252206773}
+  m_Layer: 8
   m_Name: TestBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,4 +126,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 40
-  _isTest: 0
+  _bulletImpactEffect: {fileID: 4709865834823328241, guid: 776db7fd177e031439a8de38ee17b867,
+    type: 3}
+--- !u!114 &4054483455252206773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5080438204734290708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6345ec17949408548a6ef73a0fb4c8cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lifetime: 5

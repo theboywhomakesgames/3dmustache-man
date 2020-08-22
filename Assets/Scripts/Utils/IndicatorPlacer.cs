@@ -13,18 +13,17 @@ public class IndicatorPlacer : MonoBehaviour
     [SerializeField]
     private Vector3 _restrictionOffset;
 
-    private Vector3 _offset, _subOffset;
+    private Vector3 _subOffset;
+    private float _recoilEffectFactor;
 
     public void ApplyRecoil(float amount)
     {
-        _offset += Vector3.up * amount;
+        _subOffset += Vector3.up * amount * _recoilEffectFactor;
     }
 
     private void Awake()
     {
         indicatorTransform = transform;
-        _offset = _dependance.position - transform.position;
-        _offset.z = 0;
     }
 
     private void FixedUpdate()
@@ -42,6 +41,8 @@ public class IndicatorPlacer : MonoBehaviour
             transform.position = endResult;
         }
 
+        _recoilEffectFactor = (transform.position - _dependance.transform.position).magnitude / 4;
+
         // keep cursur locked and in center
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -51,6 +52,8 @@ public class IndicatorPlacer : MonoBehaviour
     {
         Gizmos.color = new Color(1, 0, 0, 0.1f);
         Gizmos.DrawSphere(_dependance.position + _restrictionOffset, _restrictedRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(transform.position, _recoilEffectFactor);
         Gizmos.color = Color.white;
     }
 }
