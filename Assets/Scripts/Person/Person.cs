@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.EventSystems;
 
 public class Person : PhysicalObject
 {
     public Animator animator;
-    public Transform handPose;
+    public Transform handPose, pointer;
 
     public float walkSpeed, runSpeed, jumpSpeed, dashSpeed;
 
@@ -177,6 +179,20 @@ public class Person : PhysicalObject
             StopMovingRight();
             StartMovingRight();
         }
+    }
+
+    public void AimAt(Vector3 position)
+    {
+        Vector3 posDiff = position - transform.position;
+
+        if(posDiff.x > 0 != isFacingRight)
+        {
+            Flip();
+        }
+
+        position.z = pointer.position.z;
+
+        pointer.position = position;
     }
     #endregion
 

@@ -124,17 +124,22 @@ public class StepClimber : MonoBehaviour
         Vector3 stepTestInvDir = new Vector3(-stepTestCP.normal.x, 0, -stepTestCP.normal.z).normalized;
         Vector3 origin = new Vector3(stepTestCP.point.x, stepHeight, stepTestCP.point.z) + (stepTestInvDir * stepSearchOvershoot);
         Vector3 direction = Vector3.down;
-        if (!(stepCol.Raycast(new Ray(origin, direction), out hitInfo, maxStepHeight)))
+        try
         {
-            return false;
+            if (!(stepCol.Raycast(new Ray(origin, direction), out hitInfo, maxStepHeight)))
+            {
+                return false;
+            }
+
+            //We have enough info to calculate the points
+            Vector3 stepUpPoint = new Vector3(stepTestCP.point.x, hitInfo.point.y + 0.0001f, stepTestCP.point.z) + (stepTestInvDir * stepSearchOvershoot);
+            Vector3 stepUpPointOffset = stepUpPoint - new Vector3(stepTestCP.point.x, groundCP.point.y, stepTestCP.point.z);
+
+            //We passed all the checks! Calculate and return the point!
+            stepUpOffset = stepUpPointOffset;
+
         }
-
-        //We have enough info to calculate the points
-        Vector3 stepUpPoint = new Vector3(stepTestCP.point.x, hitInfo.point.y + 0.0001f, stepTestCP.point.z) + (stepTestInvDir * stepSearchOvershoot);
-        Vector3 stepUpPointOffset = stepUpPoint - new Vector3(stepTestCP.point.x, groundCP.point.y, stepTestCP.point.z);
-
-        //We passed all the checks! Calculate and return the point!
-        stepUpOffset = stepUpPointOffset;
+        catch { }
         return true;
     }
 }
