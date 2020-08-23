@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Bullet : PhysicalObject
 {
+    public float damage = 100;
+
     [SerializeField]
     private float _speed;
     [SerializeField]
@@ -24,6 +26,11 @@ public class Bullet : PhysicalObject
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.gameObject.layer == 9 || collision.gameObject.layer == 10)
+        {
+            collision.gameObject.GetComponent<Person>().ReceiveDamage(damage, _rb.velocity, transform.position);
+        }
+
         DoImpact(collision.GetContact(0));
     }
 

@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using RootMotion.Dynamics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,29 +14,53 @@ public class Person : PhysicalObject
     public float walkSpeed, runSpeed, jumpSpeed, dashSpeed;
 
     public bool isMovingForward, isMovingBackward, isMoving, isRunning, isGrounded, movingLeft, movingRight;
-    public bool isFacingRight;
+    public bool isFacingRight, isDead;
 
     [SerializeField]
     private bool _isHandFull;
     [SerializeField]
     private PickUpable _handContaining;
+    [SerializeField]
+    private PuppetMaster _puppet;
+    [SerializeField]
+    private GameObject _bloodDropPrefab;
 
     private float moveSpeed;
 
     #region Public Functions
+    public void ReceiveDamage(float damage, Vector3 dir, Vector3 position)
+    {
+        _puppet.pinWeight = 0;
+        int layerMask = 1 << 12;
+
+        Instantiate(_bloodDropPrefab, position, Quaternion.identity);
+
+        Collider[] colliders = Physics.OverlapSphere(position, 0.2f, layerMask);
+        colliders[0].GetComponent<Rigidbody>().AddForceAtPosition(dir * 10000, position);
+    }
+
+    public void Die()
+    {
+        isDead = true;
+        _puppet.state = PuppetMaster.State.Dead;
+    }
+
     public void Move(int dir)
     {
-        _rb.velocity = new Vector3(dir * moveSpeed, _rb.velocity.y, _rb.velocity.z);
+        if(!isDead)
+            _rb.velocity = new Vector3(dir * moveSpeed, _rb.velocity.y, _rb.velocity.z);
     }
 
     public void Jump()
     {
-        _rb.velocity = new Vector3(_rb.velocity.x, jumpSpeed, _rb.velocity.z);
+        if (!isDead)
+            _rb.velocity = new Vector3(_rb.velocity.x, jumpSpeed, _rb.velocity.z);
     }
 
     public void Down()
     {
-        _rb.velocity = new Vector3(_rb.velocity.x, -jumpSpeed * 2, _rb.velocity.z);
+        if (!isDead)
+            _rb.velocity = new Vector3(_rb.velocity.x, -jumpSpeed * 2, _rb.velocity.z);
     }
 
     public void InteractWithNearby()
@@ -45,7 +70,7 @@ public class Person : PhysicalObject
 
     public void Trigger()
     {
-        if (_isHandFull)
+        if (_isHandFull && !isDead)
         {
             _handContaining.Trigger((IndicatorPlacer.indicatorTransform.position - _handContaining.transform.position).normalized);
         }
@@ -53,6 +78,9 @@ public class Person : PhysicalObject
 
     public void Flip()
     {
+        if (isDead)
+            return;
+
         if (movingRight)
         {
             StopMovingRight();
@@ -78,6 +106,9 @@ public class Person : PhysicalObject
 
     public void StartMovingRight()
     {
+        if (isDead)
+            return;
+
         movingRight = true;
         if (isFacingRight)
         {
@@ -116,6 +147,9 @@ public class Person : PhysicalObject
 
     public void StartMovingLeft()
     {
+        if (isDead)
+            return;
+
         movingLeft = true;
         if (isFacingRight)
         {
@@ -159,6 +193,9 @@ public class Person : PhysicalObject
 
     public void ToggleRun()
     {
+        if (isDead)
+            return;
+
         isRunning = !isRunning;
 
         if (isRunning) {
@@ -183,6 +220,9 @@ public class Person : PhysicalObject
 
     public void AimAt(Vector3 position)
     {
+        if (isDead)
+            return;
+
         Vector3 posDiff = position - transform.position;
 
         if(posDiff.x > 0 != isFacingRight)
@@ -219,5 +259,5 @@ public class Person : PhysicalObject
     {
 
     }
-#endregion
+    #endregion
 }
