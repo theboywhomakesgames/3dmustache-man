@@ -13,7 +13,7 @@ public class EnemyController : MonoBehaviour
 
     protected Transform _threat;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         _character = GetComponent<Person>();
         _sensor.OnEnter += OnSensorEnter;

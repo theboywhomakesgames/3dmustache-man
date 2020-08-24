@@ -16,6 +16,22 @@ public class Person : PhysicalObject
     public bool isMovingForward, isMovingBackward, isMoving, isRunning, isGrounded, movingLeft, movingRight;
     public bool isFacingRight, isDead;
 
+    public Vector3 Center
+    {
+        get
+        {
+            return transform.position + _centerOffset;
+        }
+    }
+
+    public float HandReach
+    {
+        get
+        {
+            return _handReach;
+        }
+    }
+
     [SerializeField]
     private bool _isHandFull;
     [SerializeField]
@@ -24,6 +40,10 @@ public class Person : PhysicalObject
     private PuppetMaster _puppet;
     [SerializeField]
     private GameObject _bloodDropPrefab;
+    [SerializeField]
+    private float _handReach = 0.2f;
+    [SerializeField]
+    private Vector3 _centerOffset;
 
     private float moveSpeed;
 
@@ -65,7 +85,7 @@ public class Person : PhysicalObject
 
     public void InteractWithNearby()
     {
-
+        print("interacting");
     }
 
     public void Trigger()
@@ -258,6 +278,13 @@ public class Person : PhysicalObject
     private void Update()
     {
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0, 0, 0, 0.2f);
+        Gizmos.DrawWireSphere(Center, _handReach);
+        Gizmos.color = Color.white;
     }
     #endregion
 }
