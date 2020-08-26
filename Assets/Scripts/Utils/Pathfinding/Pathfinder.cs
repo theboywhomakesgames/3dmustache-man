@@ -137,6 +137,7 @@ public class Pathfinder : MonoBehaviour
             x = p.x;
             y = p.y;
 
+            // stack overflow here
             if (Mathf.Abs(x - xe) > 1 || Mathf.Abs(y - ye) > 1)
             {
                 AStar(xs, ys, x, y, xe, ye);
