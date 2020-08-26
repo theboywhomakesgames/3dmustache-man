@@ -1,6 +1,28 @@
-﻿using System.Collections;
+﻿using DG.Tweening.Plugins.Core.PathCore;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
+public struct PathPoint
+{
+    public int score, x, y;
+
+    public PathPoint(int score, int x, int y)
+    {
+        this.score = score;
+        this.x = x;
+        this.y = y;
+    }
+}
+
+public class IntComparer : IComparer<int>
+{
+    public int Compare(int i1, int i2)
+    {
+        return i1 > i2 ? 1 : -1;
+    }
+}
 
 public class Pathfinder : MonoBehaviour
 {
@@ -20,6 +42,12 @@ public class Pathfinder : MonoBehaviour
     [SerializeField]
     private float _time, _betweenUpdates;
     private bool _isResting;
+
+    [SerializeField]
+    private Vector2Int[] _moves;
+
+    private SortedList<int, PathPoint> _options;
+    private List<Vector2> _path;
 
     public void Learn()
     {
@@ -58,25 +86,80 @@ public class Pathfinder : MonoBehaviour
     {
         int xStart, yStart, xEnd, yEnd;
 
-        GetRelativeXY(start, out xStart, out xEnd);
-        GetRelativeXY(end, out yStart, out yEnd);
+        GetRelativeXY(start, out xStart, out yStart);
+        GetRelativeXY(end, out xEnd, out yEnd);
 
         // convert if elses to calculations if needed optimization
         // convert to if else for optimazation
         try
         {
-            _units[xStart, xEnd] = (byte)(0x02 | _units[xStart, xEnd]);
-            _units[yStart, yEnd] = (byte)(0x02 | _units[yStart, yEnd]);
+            _units[xStart, yStart] = (byte)(0x02 | _units[xStart, yStart]);
+            _units[xEnd, yEnd] = (byte)(0x02 | _units[xEnd, yEnd]);
+
+            _path = new List<Vector2>();
+            _options = new SortedList<int, PathPoint>(new IntComparer());
+            AStar(xStart, yStart, xStart, yStart, xEnd, yEnd);
         }
         catch { }
     }
 
-    private Vector3 GetRelativeXY(Vector3 start, out int xStart, out int yStart)
+    private void AStar(int xs, int ys, int x, int y, int xe, int ye)
     {
-        start -= transform.position + offset + new Vector3(-size.x / 2, -size.y / 2);
-        xStart = (int)Mathf.Ceil((start.x - _unitRadius) / _stepSize);
-        yStart = (int)Mathf.Ceil((start.y - _unitRadius) / _stepSize);
-        return start;
+        _path.Add(
+            new Vector2(xs, ys)
+        );
+
+        int xx = 0, yy = 0;
+
+        foreach(Vector2Int m in _moves)
+        {
+            xx = x + m.x;
+            yy = y + m.y;
+
+            if(xx > 0 && xx < _units.GetLength(0) && yy > 0 && yy < _units.GetLength(1))
+            {
+                int score = 0;
+
+                score += Mathf.Abs(xx - xs);
+                score += Mathf.Abs(yy - ys);
+
+                score += Mathf.Abs(xx - xe);
+                score += Mathf.Abs(yy - ye);
+
+                _options.Add(score, new PathPoint(score, xx, yy));
+            }
+        }
+
+        try
+        {
+            PathPoint p = _options.First().Value;
+            _options.RemoveAt(0);
+            x = p.x;
+            y = p.y;
+
+            if (Mathf.Abs(x - xe) > 1 || Mathf.Abs(y - ye) > 1)
+            {
+                AStar(xs, ys, x, y, xe, ye);
+            }
+            else
+            {
+                foreach(Vector2 v in _path)
+                {
+                    _units[(int)v.x, (int)v.y] = 0x02;
+                }
+            }
+        }
+        catch(System.Exception e) {
+            print(e.ToString());
+        }
+    }
+
+    private Vector3 GetRelativeXY(Vector3 point, out int x, out int y)
+    {
+        point -= transform.position + offset + new Vector3(-size.x / 2, -size.y / 2);
+        x = (int)Mathf.Ceil((point.x - _unitRadius) / _stepSize);
+        y = (int)Mathf.Ceil((point.y - _unitRadius) / _stepSize);
+        return point;
     }
 
     private void OnDrawGizmos(){
