@@ -8,10 +8,13 @@ public class Pathfinder : MonoBehaviour
     
     public int layerMask;
 
+    // for testing purposes
+    public Transform start, end;
+
     [SerializeField]
     private float _unitOffset, _unitRadius, _stepSize;
 
-    private bool[,] _units;
+    private byte[,] _units;
     private bool _learned, _isRunning;
 
     [SerializeField]
@@ -24,7 +27,7 @@ public class Pathfinder : MonoBehaviour
         float x = _stepSize == 1 ? size.x : (size.x / _stepSize);
         float y = _stepSize == 1 ? size.y : (size.y / _stepSize);
 
-        _units = new bool[(int)Mathf.Ceil(x), (int)Mathf.Ceil(y)];
+        _units = new byte[(int)Mathf.Ceil(x), (int)Mathf.Ceil(y)];
 
         print(_learned);
         print(_units.GetLength(0) + " " + _units.GetLength(1));
@@ -42,11 +45,38 @@ public class Pathfinder : MonoBehaviour
                     transform.position + offset + new Vector3(xOffset, yOffset),
                     _unitRadius - _unitOffset,
                     layerMask
-                );
+                ) ? (byte)0x01 : (byte)0x00;
                 y++;
             }
             x++;
         }
+
+        FindPath(start.position, end.position);
+    }
+
+    private void FindPath(Vector3 start, Vector3 end)
+    {
+        int xStart, yStart, xEnd, yEnd;
+
+        GetRelativeXY(start, out xStart, out xEnd);
+        GetRelativeXY(end, out yStart, out yEnd);
+
+        // convert if elses to calculations if needed optimization
+        // convert to if else for optimazation
+        try
+        {
+            _units[xStart, xEnd] = (byte)(0x02 | _units[xStart, xEnd]);
+            _units[yStart, yEnd] = (byte)(0x02 | _units[yStart, yEnd]);
+        }
+        catch { }
+    }
+
+    private Vector3 GetRelativeXY(Vector3 start, out int xStart, out int yStart)
+    {
+        start -= transform.position + offset + new Vector3(-size.x / 2, -size.y / 2);
+        xStart = (int)Mathf.Ceil((start.x - _unitRadius) / _stepSize);
+        yStart = (int)Mathf.Ceil((start.y - _unitRadius) / _stepSize);
+        return start;
     }
 
     private void OnDrawGizmos(){
@@ -58,13 +88,20 @@ public class Pathfinder : MonoBehaviour
             for(float xOffset = -size.x/2; xOffset < size.x/2; xOffset += _stepSize){
                 y = 0;
                 for(float yOffset = -size.y/2; yOffset < size.y/2; yOffset += _stepSize){
-                    if(_units[x, y])
+                    if((_units[x, y] & 0x01) > 0)
                     {
-                        Gizmos.color = Color.black;
+                        Gizmos.color = Color.red;
                     }
                     else
                     {
-                        Gizmos.color = Color.white;
+                        if ((_units[x, y] & 0x02) > 0)
+                        {
+                            Gizmos.color = Color.green;
+                        }
+                        else
+                        {
+                            Gizmos.color = Color.black;
+                        }
                     }
 
                     Gizmos.DrawWireSphere(
