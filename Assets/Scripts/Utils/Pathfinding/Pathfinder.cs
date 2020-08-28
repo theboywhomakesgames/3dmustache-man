@@ -1,4 +1,5 @@
 ﻿using DG.Tweening.Plugins.Core.PathCore;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,10 @@ using UnityEngine;
 
 public struct PathPoint
 {
-    public int score, x, y;
+    public int x, y;
+    public float score;
 
-    public PathPoint(int score, int x, int y)
+    public PathPoint(float score, int x, int y)
     {
         this.score = score;
         this.x = x;
@@ -16,9 +18,16 @@ public struct PathPoint
     }
 }
 
-public class IntComparer : IComparer<int>
+public struct Unit
 {
-    public int Compare(int i1, int i2)
+    public bool visited;
+    public int cameFromX, cameFromY;
+    public float scoreSoFar;
+}
+
+public class FloatComparer : IComparer<float>
+{
+    public int Compare(float i1, float i2)
     {
         return i1 > i2 ? 1 : -1;
     }
@@ -27,7 +36,7 @@ public class IntComparer : IComparer<int>
 public class Pathfinder : MonoBehaviour
 {
     public Vector3 size, offset;
-    
+
     public int layerMask;
 
     // for testing purposes
@@ -46,8 +55,7 @@ public class Pathfinder : MonoBehaviour
     [SerializeField]
     private Vector2Int[] _moves;
 
-    private SortedList<int, PathPoint> _options;
-    private List<Vector2> _path;
+    private SortedList<float, PathPoint> _options;
 
     public void Learn()
     {
@@ -56,9 +64,6 @@ public class Pathfinder : MonoBehaviour
         float y = _stepSize == 1 ? size.y : (size.y / _stepSize);
 
         _units = new byte[(int)Mathf.Ceil(x), (int)Mathf.Ceil(y)];
-
-        print(_learned);
-        print(_units.GetLength(0) + " " + _units.GetLength(1));
     }
 
     private void PhysicalLearn()
@@ -94,64 +99,87 @@ public class Pathfinder : MonoBehaviour
         try
         {
             _units[xStart, yStart] = (byte)(0x02 | _units[xStart, yStart]);
+
+            Unit[,] _myUnits = new Unit[_units.GetLength(0), _units.GetLength(1)];
+            _myUnits[xStart, yStart].visited = true;
+            _myUnits[xStart, yStart].cameFromX = xStart;
+            _myUnits[xStart, yStart].cameFromY = yStart;
+            _myUnits[xStart, yStart].scoreSoFar = 0;
+
+            // shouldn't do this you know ...
             _units[xEnd, yEnd] = (byte)(0x02 | _units[xEnd, yEnd]);
 
-            _path = new List<Vector2>();
-            _options = new SortedList<int, PathPoint>(new IntComparer());
-            AStar(xStart, yStart, xStart, yStart, xEnd, yEnd);
+            _options = new SortedList<float, PathPoint>(new FloatComparer());
+            AStar(xStart, yStart, xStart, yStart, xEnd, yEnd, _myUnits);
         }
         catch { }
     }
 
-    private void AStar(int xs, int ys, int x, int y, int xe, int ye)
+    // TODO:
+    // make it a big while() instead of recursive function
+    private void AStar(int xs, int ys, int x, int y, int xe, int ye, Unit[,] _myUnits)
     {
-        _path.Add(
-            new Vector2(xs, ys)
-        );
-
         int xx = 0, yy = 0;
-
-        foreach(Vector2Int m in _moves)
+        foreach (Vector2Int m in _moves)
         {
             xx = x + m.x;
             yy = y + m.y;
 
-            if(xx > 0 && xx < _units.GetLength(0) && yy > 0 && yy < _units.GetLength(1))
+            int test = _units[xx, yy] & 0x01;
+
+            if (xx > 0 && xx < _units.GetLength(0) && yy > 0 && yy < _units.GetLength(1) && (test == 0))
             {
-                int score = 0;
+                float score = _myUnits[x, y].scoreSoFar;
 
-                score += Mathf.Abs(xx - xs);
-                score += Mathf.Abs(yy - ys);
-
+                score += 0.1f; // cost
                 score += Mathf.Abs(xx - xe);
                 score += Mathf.Abs(yy - ye);
+
+                bool visited = _myUnits[xx, yy].visited;
+
+                if (_myUnits[xx, yy].scoreSoFar > score)
+                {
+                    _myUnits[xx, yy].visited = true;
+                    _myUnits[xx, yy].scoreSoFar = score;
+                    _myUnits[xx, yy].cameFromX = x;
+                    _myUnits[xx, yy].cameFromY = y;
+                }
+                else if (!visited)
+                {
+                    _myUnits[xx, yy].visited = true;
+                    _myUnits[xx, yy].scoreSoFar = score;
+                    _myUnits[xx, yy].cameFromX = x;
+                    _myUnits[xx, yy].cameFromY = y;
+                }
+                else
+                {
+                    continue;
+                }
 
                 _options.Add(score, new PathPoint(score, xx, yy));
             }
         }
 
-        try
-        {
-            PathPoint p = _options.First().Value;
-            _options.RemoveAt(0);
-            x = p.x;
-            y = p.y;
+        PathPoint p = _options.First().Value;
+        _options.RemoveAt(0);
+        x = p.x;
+        y = p.y;
 
-            // stack overflow here
-            if (Mathf.Abs(x - xe) > 1 || Mathf.Abs(y - ye) > 1)
-            {
-                AStar(xs, ys, x, y, xe, ye);
-            }
-            else
-            {
-                foreach(Vector2 v in _path)
-                {
-                    _units[(int)v.x, (int)v.y] = 0x02;
-                }
-            }
+        if (Mathf.Abs(x - xe) >= 1 || Mathf.Abs(y - ye) >= 1)
+        {
+            AStar(xs, ys, x, y, xe, ye, _myUnits);
         }
-        catch(System.Exception e) {
-            print(e.ToString());
+        else
+        {
+            x = xe; y = ye;
+            while (x != xs || y != ys)
+            {
+                //for test purposes
+                _units[x, y] |= 0x02;
+
+                x = _myUnits[x, y].cameFromX;
+                y = _myUnits[x, y].cameFromY;
+            }
         }
     }
 
@@ -163,16 +191,19 @@ public class Pathfinder : MonoBehaviour
         return point;
     }
 
-    private void OnDrawGizmos(){
+    private void OnDrawGizmos()
+    {
         Gizmos.DrawWireCube(transform.position + offset, size);
 
-        if(_stepSize > 0.05 && _isRunning)
+        if (_stepSize > 0.05 && _isRunning)
         {
             int x = 0, y = 0;
-            for(float xOffset = -size.x/2; xOffset < size.x/2; xOffset += _stepSize){
+            for (float xOffset = -size.x / 2; xOffset < size.x / 2; xOffset += _stepSize)
+            {
                 y = 0;
-                for(float yOffset = -size.y/2; yOffset < size.y/2; yOffset += _stepSize){
-                    if((_units[x, y] & 0x01) > 0)
+                for (float yOffset = -size.y / 2; yOffset < size.y / 2; yOffset += _stepSize)
+                {
+                    if ((_units[x, y] & 0x01) > 0)
                     {
                         Gizmos.color = Color.red;
                     }
@@ -201,7 +232,7 @@ public class Pathfinder : MonoBehaviour
 
     private void Awake()
     {
-        if(!_learned)
+        if (!_learned)
             Learn();
 
         _isRunning = true;
@@ -212,7 +243,7 @@ public class Pathfinder : MonoBehaviour
         if (_isResting)
         {
             _time += Time.deltaTime;
-            if(_time > _betweenUpdates)
+            if (_time > _betweenUpdates)
             {
                 _isResting = false;
                 _time = 0;
