@@ -56,6 +56,7 @@ public class Pathfinder : MonoBehaviour
     private Vector2Int[] _moves;
 
     private SortedList<float, PathPoint> _options;
+    private PathPoint _bestSoFar;
 
     public void Learn()
     {
@@ -104,7 +105,9 @@ public class Pathfinder : MonoBehaviour
             _myUnits[xStart, yStart].visited = true;
             _myUnits[xStart, yStart].cameFromX = xStart;
             _myUnits[xStart, yStart].cameFromY = yStart;
-            _myUnits[xStart, yStart].scoreSoFar = 0;
+            _myUnits[xStart, yStart].scoreSoFar = Mathf.Abs(xStart - xEnd) + Mathf.Abs(yStart - yEnd);
+
+            _bestSoFar = new PathPoint(_myUnits[xStart, yStart].scoreSoFar, xStart, yStart);
 
             // shouldn't do this you know ...
             _units[xEnd, yEnd] = (byte)(0x02 | _units[xEnd, yEnd]);
@@ -132,8 +135,7 @@ public class Pathfinder : MonoBehaviour
                 float score = _myUnits[x, y].scoreSoFar;
 
                 score += 0.1f; // cost
-                score += Mathf.Abs(xx - xe);
-                score += Mathf.Abs(yy - ye);
+                score += Mathf.Abs(xx - xe) + Mathf.Abs(yy - ye);
 
                 bool visited = _myUnits[xx, yy].visited;
 
@@ -160,26 +162,46 @@ public class Pathfinder : MonoBehaviour
             }
         }
 
-        PathPoint p = _options.First().Value;
-        _options.RemoveAt(0);
-        x = p.x;
-        y = p.y;
-
-        if (Mathf.Abs(x - xe) >= 1 || Mathf.Abs(y - ye) >= 1)
+        if (_options.Count > 0)
         {
-            AStar(xs, ys, x, y, xe, ye, _myUnits);
+            PathPoint p = _options.First().Value;
+            _options.RemoveAt(0);
+
+            //if(p.score < _bestSoFar.score)
+            //{
+            //    _bestSoFar = p;
+            //}
+            
+            x = p.x;
+            y = p.y;
+
+            if (Mathf.Abs(x - xe) >= 1 || Mathf.Abs(y - ye) >= 1)
+            {
+                AStar(xs, ys, x, y, xe, ye, _myUnits);
+            }
+            else
+            {
+                PrintPath(xs, ys, xe, ye, _myUnits);
+            }
         }
         else
         {
-            x = xe; y = ye;
-            while (x != xs || y != ys)
-            {
-                //for test purposes
-                _units[x, y] |= 0x02;
+            // maybe we can use the uncomplete path? but how to find it?
+            // we should have the best score so far saved somewhere
+            // PrintPath(xs, ys, _bestSoFar.x, _bestSoFar.y, _myUnits); not working !
+        }
+    }
 
-                x = _myUnits[x, y].cameFromX;
-                y = _myUnits[x, y].cameFromY;
-            }
+    private void PrintPath(int xs, int ys, int xe, int ye, Unit[,] _myUnits)
+    {
+        int x = xe, y = ye;
+        while (x != xs || y != ys)
+        {
+            //for test purposes
+            _units[x, y] |= 0x02;
+
+            x = _myUnits[x, y].cameFromX;
+            y = _myUnits[x, y].cameFromY;
         }
     }
 
