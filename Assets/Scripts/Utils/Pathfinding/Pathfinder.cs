@@ -167,13 +167,13 @@ public class Pathfinder : MonoBehaviour
             yy = y + m.y;
 
             int unitFilled = _units[xx, yy] & 0x01;
-            int underFilled = 0;
+            int underFilled = 0; // TODO: move this out of this function
 
-            if(yy - 1 > 0)
+            if(y - 1 > 0)
             {
-                underFilled = _units[xx, yy - 1] & 0x01;
+                underFilled = _units[x, y - 1] & 0x01;
 
-                if (m.y > -1 && yy - 1 > 0 && underFilled == 0)
+                if (m.y > -1 && y - 1 > 0 && underFilled == 0)
                 {
                     continue;
                 }
@@ -221,8 +221,10 @@ public class Pathfinder : MonoBehaviour
             //for test purposes
             _units[x, y] |= 0x02;
 
-            x = _myUnits[x, y].cameFromX;
-            y = _myUnits[x, y].cameFromY;
+            int tempx = x, tempy = y;
+
+            x = _myUnits[tempx, tempy].cameFromX;
+            y = _myUnits[tempx, tempy].cameFromY;
         }
     }
 
