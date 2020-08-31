@@ -50,7 +50,7 @@ public class Pathfinder : MonoBehaviour
 
     [SerializeField]
     private float _time, _betweenUpdates;
-    private bool _isResting;
+    private bool _isResting, _hasGravity;
 
     [SerializeField]
     private Vector2Int[] _moves;
@@ -123,14 +123,64 @@ public class Pathfinder : MonoBehaviour
     private void AStar(int xs, int ys, int x, int y, int xe, int ye, Unit[,] _myUnits)
     {
         int xx = 0, yy = 0;
+        CheckMoves(x, y, xe, ye, _myUnits, ref xx, ref yy);
+
+        if (_options.Count > 0)
+        {
+            PathPoint p = _options.First().Value;
+            _options.RemoveAt(0);
+
+            //if(p.score < _bestSoFar.score)
+            //{
+            //    _bestSoFar = p;
+            //}
+
+            x = p.x;
+            y = p.y;
+
+            if (Mathf.Abs(x - xe) >= 1 || Mathf.Abs(y - ye) >= 1)
+            {
+                AStar(xs, ys, x, y, xe, ye, _myUnits);
+            }
+            else
+            {
+                PrintPath(xs, ys, xe, ye, _myUnits);
+            }
+        }
+        else
+        {
+            // maybe we can use the uncomplete path? but how to find it?
+            // we should have the best score so far saved somewhere
+            // PrintPath(xs, ys, _bestSoFar.x, _bestSoFar.y, _myUnits); not working !
+        }
+    }
+
+    private void CheckMoves(int x, int y, int xe, int ye, Unit[,] _myUnits, ref int xx, ref int yy)
+    {
+        // if the bottom unit isn't blocked it has to fall
+        // no going up - just left and right, and drop
+        
+        // also, if on the ground, it can jump & go left and right
         foreach (Vector2Int m in _moves)
         {
             xx = x + m.x;
             yy = y + m.y;
 
-            int test = _units[xx, yy] & 0x01;
+            int unitFilled = _units[xx, yy] & 0x01;
+            int underFilled = 0;
 
-            if (xx > 0 && xx < _units.GetLength(0) && yy > 0 && yy < _units.GetLength(1) && (test == 0))
+            if(yy - 1 > 0)
+            {
+                underFilled = _units[xx, yy - 1] & 0x01;
+
+                if (m.y > -1 && yy - 1 > 0 && underFilled == 0)
+                {
+                    continue;
+                }
+            }
+
+
+            if (xx > 0 && xx < _units.GetLength(0) && yy > 0 && yy < _units.GetLength(1) && (unitFilled == 0))
             {
                 float score = _myUnits[x, y].scoreSoFar;
 
@@ -160,35 +210,6 @@ public class Pathfinder : MonoBehaviour
 
                 _options.Add(score, new PathPoint(score, xx, yy));
             }
-        }
-
-        if (_options.Count > 0)
-        {
-            PathPoint p = _options.First().Value;
-            _options.RemoveAt(0);
-
-            //if(p.score < _bestSoFar.score)
-            //{
-            //    _bestSoFar = p;
-            //}
-            
-            x = p.x;
-            y = p.y;
-
-            if (Mathf.Abs(x - xe) >= 1 || Mathf.Abs(y - ye) >= 1)
-            {
-                AStar(xs, ys, x, y, xe, ye, _myUnits);
-            }
-            else
-            {
-                PrintPath(xs, ys, xe, ye, _myUnits);
-            }
-        }
-        else
-        {
-            // maybe we can use the uncomplete path? but how to find it?
-            // we should have the best score so far saved somewhere
-            // PrintPath(xs, ys, _bestSoFar.x, _bestSoFar.y, _myUnits); not working !
         }
     }
 
