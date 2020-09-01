@@ -56,7 +56,7 @@ public class Pathfinder : MonoBehaviour
     private Vector2Int[] _moves;
 
     private SortedList<float, PathPoint> _options;
-    private PathPoint _bestSoFar;
+    private List<Vector3> _path;
 
     public void Learn()
     {
@@ -65,6 +65,14 @@ public class Pathfinder : MonoBehaviour
         float y = _stepSize == 1 ? size.y : (size.y / _stepSize);
 
         _units = new byte[(int)Mathf.Ceil(x), (int)Mathf.Ceil(y)];
+    }
+
+    // TODO:
+    // use callbacks instead
+    public List<Vector3> FindAPath(Vector3 start, Vector3 end)
+    {
+        FindPath(start, end);
+        return _path;
     }
 
     private void PhysicalLearn()
@@ -85,7 +93,7 @@ public class Pathfinder : MonoBehaviour
             x++;
         }
 
-        FindPath(start.position, end.position);
+        //FindPath(start.position, end.position);
     }
 
     private void FindPath(Vector3 start, Vector3 end)
@@ -94,6 +102,9 @@ public class Pathfinder : MonoBehaviour
 
         GetRelativeXY(start, out xStart, out yStart);
         GetRelativeXY(end, out xEnd, out yEnd);
+
+        yStart = FindSuitableY(xStart, yStart);
+        yEnd = FindSuitableY(xEnd, yEnd);
 
         // convert if elses to calculations if needed optimization
         // convert to if else for optimazation
@@ -107,15 +118,26 @@ public class Pathfinder : MonoBehaviour
             _myUnits[xStart, yStart].cameFromY = yStart;
             _myUnits[xStart, yStart].scoreSoFar = Mathf.Abs(xStart - xEnd) + Mathf.Abs(yStart - yEnd);
 
-            _bestSoFar = new PathPoint(_myUnits[xStart, yStart].scoreSoFar, xStart, yStart);
+            //_bestSoFar = new PathPoint(_myUnits[xStart, yStart].scoreSoFar, xStart, yStart);
 
             // shouldn't do this you know ...
             _units[xEnd, yEnd] = (byte)(0x02 | _units[xEnd, yEnd]);
 
+            _path = new List<Vector3>();
             _options = new SortedList<float, PathPoint>(new FloatComparer());
             AStar(xStart, yStart, xStart, yStart, xEnd, yEnd, _myUnits);
         }
         catch { }
+    }
+
+    private int FindSuitableY(int xStart, int yStart)
+    {
+        if (_units[xStart, yStart] > 0)
+        {
+            yStart++;
+        }
+
+        return yStart;
     }
 
     // TODO:
@@ -222,10 +244,28 @@ public class Pathfinder : MonoBehaviour
             _units[x, y] |= 0x02;
 
             int tempx = x, tempy = y;
+            _path.Add(
+                GetRealXY(new Vector3(x, y))
+            );
 
             x = _myUnits[tempx, tempy].cameFromX;
             y = _myUnits[tempx, tempy].cameFromY;
         }
+    }
+
+    private Vector3 GetRealXY(Vector3 point)
+    {
+        point.x = _stepSize * point.x;
+        point.y = _stepSize * point.y;
+
+        point -= new Vector3(
+            size.x / 2,
+            size.y / 2
+        );
+
+        point += transform.position + offset;
+
+        return point;
     }
 
     private Vector3 GetRelativeXY(Vector3 point, out int x, out int y)
