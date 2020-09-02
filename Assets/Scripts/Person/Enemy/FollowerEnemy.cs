@@ -63,8 +63,10 @@ public class FollowerEnemy : EnemyController
         GotoPosition(position);
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         Vector3 diff = targetPos - _character.Center;
         if (_shouldBeGoing && !_isGoing)
         {

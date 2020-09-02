@@ -6,6 +6,9 @@ public class PickUpable : PhysicalObject, ITriggerable
 {
     public Person holder;
     public bool hasHolder;
+
+    protected bool _playerHeld;
+
     [SerializeField]
     protected Transform handle;
     [SerializeField]
@@ -17,6 +20,9 @@ public class PickUpable : PhysicalObject, ITriggerable
         hasHolder = true;
         transform.parent = p.handPose;
         transform.position = transform.position + p.handPose.position - handle.position;
+
+        _playerHeld = p.gameObject.layer == 9;
+
         GetPickedUp();
     }
 
@@ -29,6 +35,7 @@ public class PickUpable : PhysicalObject, ITriggerable
     public virtual void GetDropped(Vector3 dir = default(Vector3))
     {
         _rb.isKinematic = false;
+        transform.parent = null;
         colliders.SetActive(true);
     }
 

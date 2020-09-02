@@ -60,7 +60,7 @@ public class Person : PhysicalObject
         try
         {
             Collider[] colliders = Physics.OverlapSphere(position, 0.2f, layerMask);
-            colliders[0].GetComponent<Rigidbody>().AddForceAtPosition(dir * 10000 / Time.timeScale, position);
+            colliders[0].GetComponent<Rigidbody>().AddForceAtPosition(dir * 1000 / Time.timeScale, position);
         }
         catch { }
 
@@ -74,6 +74,7 @@ public class Person : PhysicalObject
         animator.enabled = false;
         _myCollider.enabled = false;
         _rb.isKinematic = true;
+        DropHandContaining();
     }
 
     public void Move(int dir)
@@ -103,7 +104,7 @@ public class Person : PhysicalObject
     {
         if (_isHandFull && !isDead)
         {
-            _handContaining.Trigger((IndicatorPlacer.indicatorTransform.position - _handContaining.transform.position).normalized);
+            _handContaining.Trigger((pointer.position - _handContaining.transform.position).normalized);
         }
     }
 
@@ -270,6 +271,15 @@ public class Person : PhysicalObject
     #endregion
 
     #region private Functions
+    protected void DropHandContaining()
+    {
+        if (_isHandFull)
+        {
+            _isHandFull = false;
+            _handContaining.GetDropped();
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();

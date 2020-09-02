@@ -16,9 +16,10 @@ public class IndicatorPlacer : MonoBehaviour
     private Vector3 _subOffset;
     private float _recoilEffectFactor;
 
-    public void ApplyRecoil(float amount)
+    public void ApplyRecoil(float amount, Vector3 center)
     {
-        _subOffset += Vector3.up * amount * _recoilEffectFactor;
+        if((center - transform.position).magnitude < 10)
+            _subOffset += Vector3.up * amount * _recoilEffectFactor;
     }
 
     private void Awake()

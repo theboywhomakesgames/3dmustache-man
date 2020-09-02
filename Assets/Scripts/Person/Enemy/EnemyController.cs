@@ -6,7 +6,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     protected Person _character;
-    protected bool _isAlert, _hasTarget;
+    protected bool _isAlert, _hasTarget, _isShooting;
 
     [SerializeField]
     protected SimpleSensor _sensor;
@@ -48,18 +48,30 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         // should be alert?!
         if(_hasTarget != _isAlert)
         {
-            _isAlert = true;
+            _isAlert = _hasTarget;
+            if (_isAlert)
+                Invoke(nameof(StartShooting), 1);
         }
 
         // what to do?
         if (_hasTarget)
         {
             _character.AimAt(_threat.position);
+
+            if (_isShooting)
+            {
+                _character.Trigger();
+            }
         }
+    }
+
+    private void StartShooting()
+    {
+        _isShooting = true;
     }
 }

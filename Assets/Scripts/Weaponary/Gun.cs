@@ -47,8 +47,12 @@ public class Gun : PickUpable
                 ShootOne(newDir);
             }
 
-            _indicator.ApplyRecoil(_recoilAmount);
-            ScreeShake();
+            if (_playerHeld)
+            {
+                _indicator.ApplyRecoil(_recoilAmount, transform.position);
+                ScreeShake();
+            }
+
             _audioSource.PlayOneShot(_shootingSFX);
 
             _curClip--;
