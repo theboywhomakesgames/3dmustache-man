@@ -8,7 +8,9 @@ public class FollowerEnemy : EnemyController
     public Vector3 targetPos;
     public Transform target;
 
+    [SerializeField]
     private bool _isSuspiciousAboutPosition, _followingPath, _hasShaash;
+    [SerializeField]
     private bool _isGoing, _shouldBeGoing, _shouldInteract;
 
     private List<Vector3> _path;
@@ -68,16 +70,13 @@ public class FollowerEnemy : EnemyController
 
     private void Update()
     {
-        Vector3 diff = targetPos - transform.position;
+        Vector3 diff = targetPos - _character.Center;
         if (_shouldBeGoing && !_isGoing)
         {
-            if (_hasShaash != _character.isRunning)
-            {
-                _character.ToggleRun();
-            }
+            SetRunningStatus();
 
             _character.AimAt(targetPos);
-            if(diff.x > 0)
+            if (diff.x > 0)
             {
                 _character.StartMovingRight();
             }
@@ -92,11 +91,12 @@ public class FollowerEnemy : EnemyController
         if (_isGoing)
         {
             if (diff.magnitude > _character.HandReach)
+            {
                 _character.Move((int)Mathf.Sign(diff.x));
+            }
             else
             {
                 _isGoing = false;
-                
 
                 if (_shouldInteract)
                 {
@@ -116,15 +116,20 @@ public class FollowerEnemy : EnemyController
         }
     }
 
+    private void SetRunningStatus()
+    {
+        if (_hasShaash != _character.isRunning)
+        {
+            _character.ToggleRun();
+        }
+    }
+
     private void TryToStopMoving(Vector3 diff)
     {
-        if (diff.x > 0)
-        {
-            _character.StopMovingRight();
-        }
-        else
-        {
-            _character.StopMovingLeft();
-        }
+        _hasShaash = false;
+
+        SetRunningStatus();
+        _character.StopMovingRight();
+        _character.StopMovingLeft();
     }
 }

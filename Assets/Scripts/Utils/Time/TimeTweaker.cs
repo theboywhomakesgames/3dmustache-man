@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,8 +9,10 @@ public class TimeTweaker : MonoBehaviour
     private float _stepSize = 0.2f, _fastModeFactor = 5;
     private float _beforeFastening = 0;
 
-    protected static float _fixedToScale = 0.01f, _oneMinusTS;
+    protected static float _fixedToScale = 0.01f, _oneMinusTS, _curTS;
     protected static bool _isFast = false;
+
+    protected Tween dtTween, fixeddtTween;
 
     public void FastenUp()
     {
@@ -19,7 +22,15 @@ public class TimeTweaker : MonoBehaviour
 
             _beforeFastening = Time.timeScale;
 
-            Time.timeScale += _fastModeFactor * _oneMinusTS;
+            try
+            {
+                dtTween.Kill();
+                fixeddtTween.Kill();
+            }
+            catch { }
+
+            _curTS = Time.timeScale + _fastModeFactor * _oneMinusTS;
+            DOTween.To(()=>Time.timeScale, (x)=> { Time.timeScale = x; }, Time.timeScale + _fastModeFactor * _oneMinusTS, 0.2f).SetUpdate(true);
             SetFixedDeltaTime();
         }
     }
@@ -30,14 +41,22 @@ public class TimeTweaker : MonoBehaviour
         {
             _isFast = false;
 
-            Time.timeScale = _beforeFastening;
+            try
+            {
+                dtTween.Kill();
+                fixeddtTween.Kill();
+            }
+            catch { }
+
+            _curTS = _beforeFastening;
+            DOTween.To(() => Time.timeScale, (x) => { Time.timeScale = x; }, _beforeFastening, 0.2f).SetUpdate(true);
             SetFixedDeltaTime();
         }
     }
 
     private void SetFixedDeltaTime()
     {
-        Time.fixedDeltaTime = Time.timeScale * _fixedToScale;
+        DOTween.To(() => Time.fixedDeltaTime, (x) => { Time.fixedDeltaTime = x; }, _curTS * _fixedToScale, 0.2f).SetUpdate(true);
     }
 
     private void Start()
@@ -57,7 +76,8 @@ public class TimeTweaker : MonoBehaviour
         if (!_isFast)
         {
             Time.timeScale = Mathf.Clamp(Time.timeScale - delta * _stepSize, 0.01f, 1);
-            SetFixedDeltaTime();
+            Time.fixedDeltaTime = Time.timeScale * _fixedToScale;
+            _curTS = Time.timeScale;
             _oneMinusTS = 1 - Time.timeScale;
         }
     }
