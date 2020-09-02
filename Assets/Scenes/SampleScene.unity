@@ -10587,7 +10587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stepSize: 0.05
-  _fastModeFactor: 2
+  _fastModeFactor: 1
 --- !u!114 &836640617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18843,10 +18843,20 @@ PrefabInstance:
       propertyPath: _reloadDuration
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 467444443229935447, guid: 6b6b5b4702b4ff2468479eef579a0dd3,
+        type: 3}
+      propertyPath: _soundRadius
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 467444443229935448, guid: 6b6b5b4702b4ff2468479eef579a0dd3,
         type: 3}
       propertyPath: m_Name
       value: glock
+      objectReference: {fileID: 0}
+    - target: {fileID: 774016531454447962, guid: 6b6b5b4702b4ff2468479eef579a0dd3,
+        type: 3}
+      propertyPath: m_Interpolate
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 952338225622617570, guid: 6b6b5b4702b4ff2468479eef579a0dd3,
         type: 3}
@@ -24282,6 +24292,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: glock
+      objectReference: {fileID: 0}
+    - target: {fileID: 774016531454447962, guid: 6b6b5b4702b4ff2468479eef579a0dd3,
+        type: 3}
+      propertyPath: m_Interpolate
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 952338225622617570, guid: 6b6b5b4702b4ff2468479eef579a0dd3,
         type: 3}
