@@ -137,6 +137,19 @@ public class Pathfinder : MonoBehaviour
             yStart++;
         }
 
+        //if (yStart - 1 > 0)
+        //{
+        //    int newY = yStart - 1;
+        //    bool underfilled = _units[xStart, newY] > 0;
+
+        //    while (newY > 0 && !underfilled)
+        //    {
+        //        underfilled = _units[xStart, newY] > 0;
+        //    }
+
+        //    yStart = newY;
+        //}
+
         return yStart;
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#if UNITY_EDITOR
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -65,3 +66,4 @@ public class PathfinderEditor : Editor
         myScript.layerMask = LayerMaskField("Mask", myScript.layerMask);
     }
 }
+#endif

@@ -8,7 +8,7 @@ public class FollowerEnemy : EnemyController
     public Vector3 targetPos;
     public Transform target;
 
-    private bool _isSuspiciousAboutPosition, _followingPath;
+    private bool _isSuspiciousAboutPosition, _followingPath, _hasShaash;
     private bool _isGoing, _shouldBeGoing, _shouldInteract;
 
     private List<Vector3> _path;
@@ -18,14 +18,20 @@ public class FollowerEnemy : EnemyController
     [SerializeField]
     private Pathfinder _pathfinder;
 
-    private void Start()
+    public void HearShit(Vector3 from)
     {
-        Invoke(nameof(GotoTarget), 1);
+        _hasShaash = true;
+        GotoTarget(from);
     }
 
-    private void GotoTarget()
+    private void Start()
     {
-        _path = _pathfinder.FindAPath(transform.position, target.position);
+
+    }
+
+    private void GotoTarget(Vector3 gotoPos)
+    {
+        _path = _pathfinder.FindAPath(transform.position, gotoPos);
         // TODO:
         // bring this line to pathfinder
         _path.Reverse();
@@ -44,8 +50,7 @@ public class FollowerEnemy : EnemyController
         GotoPosition(_path[0]);
         _path.RemoveAt(0);
         
-        _followingPath = _path.Count > 0;
-        
+        _followingPath = _path.Count > 0;        
     }
 
     private void GotoPosition(Vector3 position)
@@ -66,6 +71,11 @@ public class FollowerEnemy : EnemyController
         Vector3 diff = targetPos - transform.position;
         if (_shouldBeGoing && !_isGoing)
         {
+            if (_hasShaash != _character.isRunning)
+            {
+                _character.ToggleRun();
+            }
+
             _character.AimAt(targetPos);
             if(diff.x > 0)
             {
@@ -81,7 +91,7 @@ public class FollowerEnemy : EnemyController
 
         if (_isGoing)
         {
-            if (Mathf.Abs(diff.x) > _character.HandReach)
+            if (diff.magnitude > _character.HandReach)
                 _character.Move((int)Mathf.Sign(diff.x));
             else
             {

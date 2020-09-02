@@ -22,9 +22,12 @@ public class BloodDrop : MonoBehaviour
 
             foreach (ParticleCollisionEvent ce in collisionEvents)
             {
-                Transform blood = Instantiate(_bloodPref).transform;
-                blood.forward = -ce.normal;
-                blood.position = ce.intersection;
+                if (ce.normal.magnitude > 0)
+                {
+                    Transform blood = Instantiate(_bloodPref).transform;
+                    blood.forward = -ce.normal;
+                    blood.position = ce.intersection;
+                }
             }
         }
     }
