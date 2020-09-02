@@ -58,6 +58,8 @@ public class Pathfinder : MonoBehaviour
     private SortedList<float, PathPoint> _options;
     private List<Vector3> _path;
 
+    private BoxCollider _collider;
+
     public void Learn()
     {
         _learned = true;
@@ -334,6 +336,25 @@ public class Pathfinder : MonoBehaviour
             Learn();
 
         _isRunning = true;
+
+        SetUpCollider();
+    }
+
+    private void SetUpCollider()
+    {
+        _collider = GetComponent<BoxCollider>();
+        _collider.center = offset;
+        _collider.size = size;
+        _collider.isTrigger = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        try
+        {
+            other.GetComponent<EnemyController>().SetPathfinder(this);
+        }
+        catch { }
     }
 
     private void Update()

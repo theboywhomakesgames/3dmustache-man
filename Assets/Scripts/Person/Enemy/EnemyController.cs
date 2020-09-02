@@ -13,6 +13,16 @@ public class EnemyController : MonoBehaviour
 
     protected Transform _threat;
 
+    // TODO:
+    // assign pathfinder dynamically
+    [SerializeField]
+    protected Pathfinder _pathfinder;
+
+    public void SetPathfinder(Pathfinder pf)
+    {
+        _pathfinder = pf;
+    }
+
     protected virtual void Awake()
     {
         _character = GetComponent<Person>();

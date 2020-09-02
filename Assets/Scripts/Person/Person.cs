@@ -60,7 +60,7 @@ public class Person : PhysicalObject
         try
         {
             Collider[] colliders = Physics.OverlapSphere(position, 0.2f, layerMask);
-            colliders[0].GetComponent<Rigidbody>().AddForceAtPosition(dir * 10000, position);
+            colliders[0].GetComponent<Rigidbody>().AddForceAtPosition(dir * 10000 / Time.timeScale, position);
         }
         catch { }
 

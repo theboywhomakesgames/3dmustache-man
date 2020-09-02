@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1191184784665248668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8883253627679076833}
+  - component: {fileID: 246038418668425318}
+  m_Layer: 15
+  m_Name: collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8883253627679076833
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191184784665248668}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5080438204734290706}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &246038418668425318
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1191184784665248668}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.39387235
+  m_Height: 1.3181682
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5080438204734290708
 GameObject:
   m_ObjectHideFlags: 0
@@ -15,6 +60,7 @@ GameObject:
   - component: {fileID: 5080438204734290710}
   - component: {fileID: 5080438204734290711}
   - component: {fileID: 4054483455252206773}
+  - component: {fileID: 8191245332479232563}
   m_Layer: 8
   m_Name: TestBullet
   m_TagString: Untagged
@@ -32,7 +78,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0.70710677, w: 0.7071068}
   m_LocalPosition: {x: 1.373, y: 1.367, z: 0.5}
   m_LocalScale: {x: 0.020853672, y: 0.031215861, z: 0.020853672}
-  m_Children: []
+  m_Children:
+  - {fileID: 8883253627679076833}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90.00001}
@@ -59,6 +106,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -83,6 +131,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &5080438204734290705
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -91,7 +140,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5080438204734290708}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2
@@ -125,9 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43a113748dbdfea47915a3d9ab6ca9ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 100
   _speed: 25
-  _bulletImpactEffect: {fileID: 4709865834823328241, guid: 776db7fd177e031439a8de38ee17b867,
-    type: 3}
 --- !u!114 &4054483455252206773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,3 +189,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lifetime: 5
+--- !u!114 &8191245332479232563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5080438204734290708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71f7c5438c490a6409fd1f0bbfe7777a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bulletImpactEffect: {fileID: 4709865834823328241, guid: 776db7fd177e031439a8de38ee17b867,
+    type: 3}

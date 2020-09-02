@@ -19,8 +19,8 @@ TagManager:
   - Tool
   - PlayerRagdoll
   - Sensor
-  - 
-  - 
+  - Pathfinder
+  - Bullet Collider
   - 
   - 
   - 

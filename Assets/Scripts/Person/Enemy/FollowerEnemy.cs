@@ -15,11 +15,6 @@ public class FollowerEnemy : EnemyController
 
     private List<Vector3> _path;
 
-    // TODO:
-    // assign pathfinder dynamically
-    [SerializeField]
-    private Pathfinder _pathfinder;
-
     public void HearShit(Vector3 from)
     {
         _hasShaash = true;
