@@ -44,6 +44,8 @@ public class Person : PhysicalObject
     private float _handReach = 0.2f;
     [SerializeField]
     private Vector3 _centerOffset;
+    [SerializeField]
+    private Collider _myCollider;
 
     private float moveSpeed;
 
@@ -55,14 +57,23 @@ public class Person : PhysicalObject
 
         Instantiate(_bloodDropPrefab, position, Quaternion.identity);
 
-        Collider[] colliders = Physics.OverlapSphere(position, 0.2f, layerMask);
-        colliders[0].GetComponent<Rigidbody>().AddForceAtPosition(dir * 10000, position);
+        try
+        {
+            Collider[] colliders = Physics.OverlapSphere(position, 0.2f, layerMask);
+            colliders[0].GetComponent<Rigidbody>().AddForceAtPosition(dir * 10000, position);
+        }
+        catch { }
+
+        Die();
     }
 
     public void Die()
     {
         isDead = true;
         _puppet.state = PuppetMaster.State.Dead;
+        animator.enabled = false;
+        _myCollider.enabled = false;
+        _rb.isKinematic = true;
     }
 
     public void Move(int dir)

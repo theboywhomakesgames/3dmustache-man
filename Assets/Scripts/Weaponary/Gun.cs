@@ -13,7 +13,7 @@ public class Gun : PickUpable
     [SerializeField]
     private Transform _gunHole;
     [SerializeField]
-    private float _fixedZ = 0.5f, _restDuration = 0.5f, _recoilAmount = 0.1f, _shakeStrength = 5, _reloadDuration, _spread;
+    private float _fixedZ = 0.5f, _restDuration = 0.5f, _recoilAmount = 0.1f, _shakeStrength = 5, _reloadDuration, _spread, _soundRadius = 3;
     [SerializeField]
     private int _clipSize = 12, _curClip, _curClips = 3, _chunckSize = 1;
     [SerializeField]
@@ -55,6 +55,20 @@ public class Gun : PickUpable
             if(_curClip <= 0)
             {
                 GoOut();
+            }
+
+            int mask = 1 << 10;
+            Collider[] colliders = Physics.OverlapSphere(transform.position, _soundRadius, mask);
+            foreach(Collider c in colliders)
+            {
+                try
+                {
+                    c.gameObject.GetComponent<FollowerEnemy>().HearShit(transform.position);
+                }
+                catch
+                {
+                    continue;
+                }
             }
         }
     }
@@ -101,5 +115,10 @@ public class Gun : PickUpable
         {
             Reload();
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, _soundRadius);
     }
 }
