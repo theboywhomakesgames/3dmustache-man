@@ -37,8 +37,9 @@ Material:
     - _RimMin: 0
     - _Shininess: 0.078125
     m_Colors:
-    - _Color: {r: 1, g: 0, b: 0.009601116, a: 1}
+    - _Color: {r: 0, g: 1, b: 0.13310409, a: 1}
     - _HColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 1, g: 0.94868153, b: 0.66176474, a: 0.7058824}
     - _SColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
     - _SpecColor: {r: 0.5441177, g: 1, b: 0.5661258, a: 1}
+  m_BuildTextureStacks: []

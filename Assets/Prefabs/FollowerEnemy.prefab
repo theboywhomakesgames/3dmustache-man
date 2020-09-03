@@ -381,7 +381,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: -1, y: -0, z: -0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.000000026891929, y: 0.026103158, z: -0.00000010803339}
+  m_ConnectedAnchor: {x: -0.000000023283055, y: 0.026103158, z: -0.00000009406356}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 0, z: -1}
   m_XMotion: 0
@@ -2477,7 +2477,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6457593232150808751}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.70710677}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 16, y: 4.168, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2487,7 +2487,7 @@ Transform:
   - {fileID: 6100856074955920558}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &6457593232172717857
 GameObject:
   m_ObjectHideFlags: 0
@@ -3291,7 +3291,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 15.984932, y: 4.870961, z: 0.49711934}
+  m_ConnectedAnchor: {x: -2.015068, y: 4.870961, z: 0.49711934}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 2
@@ -4472,7 +4472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77612ce1cf7601048937732143b7ade7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
+  animator_: {fileID: 0}
   handPose: {fileID: 6457593231425653552}
   pointer: {fileID: 6457593232339606227}
   walkSpeed: 1.5

@@ -20,6 +20,8 @@ public class Gun : PickUpable
     private string _name = "pistol";
     [SerializeField]
     private bool _loadOnStart = true;
+    [SerializeField]
+    private Light _flash;
 
     private float _time;
     private bool isResting = false, _isOut = false;
@@ -54,6 +56,7 @@ public class Gun : PickUpable
             }
 
             _audioSource.PlayOneShot(_shootingSFX);
+            Flash();
 
             _curClip--;
             if(_curClip <= 0)
@@ -75,6 +78,17 @@ public class Gun : PickUpable
                 }
             }
         }
+    }
+
+    private void Flash()
+    {
+        _flash.enabled = true;
+        Invoke(nameof(TurnOffFlash), 0.1f);
+    }
+
+    private void TurnOffFlash()
+    {
+        _flash.enabled = false;
     }
 
     private void GoOut()
