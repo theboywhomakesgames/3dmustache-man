@@ -8,13 +8,33 @@ using UnityEngine.EventSystems;
 
 public class Person : PhysicalObject
 {
-    public Animator animator;
+    public Animator animator_;
+
+    public Animator animator
+    {
+        get
+        {
+            if(animator_ != null)
+            {
+                return animator_;
+            }
+            else
+            {
+                GetAnimator();
+                return animator_;
+            }
+        }
+    }
+
     public Transform handPose, pointer;
 
     public float walkSpeed, runSpeed, jumpSpeed, dashSpeed;
 
     public bool isMovingForward, isMovingBackward, isMoving, isRunning, isGrounded, movingLeft, movingRight;
     public bool isFacingRight, isDead;
+
+    public delegate void CB();
+    public event CB OnDeath;
 
     public Vector3 Center
     {
@@ -74,7 +94,9 @@ public class Person : PhysicalObject
         animator.enabled = false;
         _myCollider.enabled = false;
         _rb.isKinematic = true;
+
         DropHandContaining();
+        OnDeath?.Invoke();
     }
 
     public void Move(int dir)
@@ -283,7 +305,6 @@ public class Person : PhysicalObject
     protected override void Awake()
     {
         base.Awake();
-        animator = GetComponent<Animator>();
     }
 
     protected virtual void Start()
@@ -294,6 +315,11 @@ public class Person : PhysicalObject
         }
 
         moveSpeed = walkSpeed;
+    }
+
+    private void GetAnimator()
+    {
+        animator_ = GetComponent<Animator>();
     }
 
     private void Update()

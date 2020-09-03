@@ -30,6 +30,13 @@ public class CustomInput
     {
         OnUp?.Invoke();
     }
+
+    public void ClearEvents()
+    {
+        OnHold = null;
+        OnDown = null;
+        OnUp = null;
+    }
 }
 
 [CreateAssetMenu(menuName = "SO/InputManager")]
@@ -48,5 +55,13 @@ public class Inputs : ScriptableObject
         }
 
         return null;
+    }
+
+    public void ClearAll()
+    {
+        foreach(CustomInput i in inputs)
+        {
+            i.ClearEvents();
+        }
     }
 }

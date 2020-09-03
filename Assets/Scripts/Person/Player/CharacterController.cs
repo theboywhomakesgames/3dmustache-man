@@ -6,7 +6,25 @@ using UnityEngine;
 public class CharacterController : MonoBehaviour
 {
     public Inputs inputsManager;
-    public Person character;
+    public Person character_;
+
+    public Person character
+    {
+        get
+        {
+            if(character_ == null)
+            {
+                character_ = GetComponent<Person>();
+            }
+
+            return character_;
+        }
+
+        set
+        {
+            character_ = value;
+        }
+    }
 
     public Transform indicator;
 
@@ -16,6 +34,8 @@ public class CharacterController : MonoBehaviour
 
     public void BindInputs()
     {
+        inputsManager.ClearAll();
+
         CustomInput right = inputsManager.GetInput("Right");
         right.OnDown += character.StartMovingRight;
         right.OnDown += StartAction;
