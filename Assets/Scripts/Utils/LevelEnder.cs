@@ -12,7 +12,7 @@ public class LevelEnder : MonoBehaviour
     {
         if(other.gameObject.layer == 9)
         {
-            light.DOIntensity(100, 2);
+            light.DOIntensity(300, 2);
             Invoke(nameof(LoadNext), 2);
         }
     }
